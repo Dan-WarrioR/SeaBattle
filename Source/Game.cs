@@ -22,17 +22,20 @@ namespace Source
 
 		private Renderer _renderer;
 
-		private PlayerInput _playerInput;
-		private PlayerInput _enemyInput;
+		private IInputHandler _playerInput;
+		private IInputHandler _enemyInput;
 
 		public Game()
 		{
 			_playerMap = new(MapSize);
+			_playerMap.OnCellBombed += OnBombedCell;
+
 			_enemyMap = new(MapSize);
+			_enemyMap.OnCellBombed += OnBombedCell;
 
 			_renderer = new(_enemyMap, _playerMap);
-			_playerInput = new(_playerMap, Vector2.Zero);
-			_enemyInput = new(_enemyMap, Vector2.Zero);
+			_playerInput = new PlayerInput(_playerMap, Vector2.Zero);
+			_enemyInput = new RandomInput(_enemyMap, Vector2.Zero);
 		}
 
 		//////////
@@ -58,8 +61,6 @@ namespace Source
 
 				while (!IsEndGame())
 				{
-					CalculateInput();
-
 					DoLogic();
 
 					Draw();
@@ -70,39 +71,19 @@ namespace Source
 			while (Console.ReadKey(true).Key == ConsoleKey.Y);
 		}	
 
-		private void CalculateInput()
-		{
-			if (_currentPlayerMove == PlayerMove.Player)
-			{
-				_playerInput.UpdatePlayerInput();
-			}
-			else
-			{
-				_enemyInput.UpdatePlayerInput(true);
-			}
-		}
-
 		private void DoLogic()
 		{
-			if (_currentPlayerMove == PlayerMove.Player)
-			{
-				if (!_playerInput.IsConfirmed)
-				{
-					return;
-				}
+			var currentInput = _currentPlayerMove == PlayerMove.Player ? _playerInput : _enemyInput;
+			var targetMap = _currentPlayerMove == PlayerMove.Player ? _enemyMap : _playerMap;
 
-				if (_enemyMap.IsValidMove(_playerInput.CurrentPosition.X, _playerInput.CurrentPosition.Y) && !_enemyMap.TryBombCell(_playerInput.CurrentPosition))
-				{
-					SwitchTurn();
-				}
-			}
-			else
+			currentInput.UpdateInput();
+
+			if (!currentInput.IsConfirmed)
 			{
-				if (!_playerMap.TryBombCell(_enemyInput.CurrentPosition))
-				{
-					SwitchTurn();
-				}
+				return;
 			}
+
+			targetMap.TryBombCell(currentInput.CurrentPosition);
 		}
 
 		private bool IsEndGame()
@@ -115,7 +96,13 @@ namespace Source
 			_currentPlayerMove = _currentPlayerMove == PlayerMove.Player ? PlayerMove.Enemy : PlayerMove.Player;
 		}
 
-		//////////
+		private void OnBombedCell(CellState state)
+		{
+			if (state != CellState.Hit)
+			{
+				SwitchTurn();
+			}
+		}
 
 		private void Draw()
 		{
