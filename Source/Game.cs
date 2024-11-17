@@ -1,4 +1,4 @@
-﻿namespace SeaBattle
+﻿namespace Source
 {
 	public class Game
 	{
