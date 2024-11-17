@@ -33,7 +33,7 @@ namespace Source
 			_enemyMap = new(MapSize);
 			_enemyMap.OnCellBombed += OnPlayerBombedCell;
 
-			_renderer = new(_playerMap, _enemyMap);
+			_renderer = new(_enemyMap, _playerMap);
 			_playerInput = new(_playerMap, Vector2.Zero);
 			_enemyInput = new(_enemyMap, Vector2.Zero);
 		}
