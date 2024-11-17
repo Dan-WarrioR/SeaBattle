@@ -1,5 +1,4 @@
-﻿using Source.Configs;
-using Source.Tools.Math;
+﻿using Source.Tools.Math;
 
 namespace Source.MapGeneration
 {

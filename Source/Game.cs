@@ -61,7 +61,7 @@ namespace Source
 
 				while (!IsEndGame())
 				{
-					DoLogic();
+					ProcessTurn();
 
 					Draw();
 				}
@@ -71,19 +71,21 @@ namespace Source
 			while (Console.ReadKey(true).Key == ConsoleKey.Y);
 		}	
 
-		private void DoLogic()
+		private void ProcessTurn()
 		{
-			var currentInput = _currentPlayerMove == PlayerMove.Player ? _playerInput : _enemyInput;
-			var targetMap = _currentPlayerMove == PlayerMove.Player ? _enemyMap : _playerMap;
+			(IInputHandler input, Map map) = _currentPlayerMove == PlayerMove.Player ? (_playerInput, _enemyMap) : (_enemyInput, _playerMap);
 
-			currentInput.UpdateInput();
+			input.UpdateInput();
 
-			if (!currentInput.IsConfirmed)
+			if (!input.IsConfirmed)
 			{
 				return;
 			}
 
-			targetMap.TryBombCell(currentInput.CurrentPosition);
+			if (!map.TryBombCell(input.CurrentPosition))
+			{
+				SwitchTurn();
+			}
 		}
 
 		private bool IsEndGame()

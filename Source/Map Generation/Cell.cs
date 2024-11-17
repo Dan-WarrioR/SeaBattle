@@ -1,6 +1,4 @@
-﻿using Source.Configs;
-
-namespace Source.MapGeneration
+﻿namespace Source.MapGeneration
 {
 	public enum CellState
 	{
