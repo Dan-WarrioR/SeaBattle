@@ -57,7 +57,7 @@
 
 				while (!IsEndGame())
 				{
-					GetPlayerInput();
+					CalculatePlayerInput();
 
 					Logic();
 
@@ -73,7 +73,7 @@
 
 		//Player Input
 
-		private void GetPlayerInput()
+		private void CalculatePlayerInput()
 		{
 			var key = Console.ReadKey(true).Key;
 
