@@ -18,7 +18,7 @@ namespace Source
 		private Map _playerMap;
 		private Map _enemyMap;
 
-		private PlayerMove _curentPlayerMove = PlayerMove.Player;
+		private PlayerMove _currentPlayerMove = PlayerMove.Player;
 
 		private Renderer _renderer;
 
@@ -28,10 +28,7 @@ namespace Source
 		public Game()
 		{
 			_playerMap = new(MapSize);
-			_playerMap.OnCellBombed += OnEnemyBombedCell;
-
 			_enemyMap = new(MapSize);
-			_enemyMap.OnCellBombed += OnPlayerBombedCell;
 
 			_renderer = new(_enemyMap, _playerMap);
 			_playerInput = new(_playerMap, Vector2.Zero);
@@ -75,7 +72,7 @@ namespace Source
 
 		private void CalculateInput()
 		{
-			if (_curentPlayerMove == PlayerMove.Player)
+			if (_currentPlayerMove == PlayerMove.Player)
 			{
 				_playerInput.UpdatePlayerInput();
 			}
@@ -87,7 +84,7 @@ namespace Source
 
 		private void DoLogic()
 		{
-			if (_curentPlayerMove == PlayerMove.Player)
+			if (_currentPlayerMove == PlayerMove.Player)
 			{
 				if (!_playerInput.IsConfirmed)
 				{
@@ -96,14 +93,14 @@ namespace Source
 
 				if (_enemyMap.IsValidMove(_playerInput.CurrentPosition.X, _playerInput.CurrentPosition.Y) && !_enemyMap.TryBombCell(_playerInput.CurrentPosition))
 				{
-					_curentPlayerMove = PlayerMove.Enemy;
+					SwitchTurn();
 				}
 			}
 			else
 			{
 				if (!_playerMap.TryBombCell(_enemyInput.CurrentPosition))
 				{
-					_curentPlayerMove = PlayerMove.Player;
+					SwitchTurn();
 				}
 			}
 		}
@@ -113,20 +110,9 @@ namespace Source
 			return _enemyMap.ShipsCount <= 0 || _playerMap.ShipsCount <= 0;
 		}
 
-		private void OnPlayerBombedCell(CellState state)
+		private void SwitchTurn()
 		{
-			if (state == CellState.Miss)
-			{
-				_curentPlayerMove = PlayerMove.Enemy;
-			}
-		}
-
-		private void OnEnemyBombedCell(CellState state)
-		{
-			if (state == CellState.Miss)
-			{
-				_curentPlayerMove = PlayerMove.Player;
-			}
+			_currentPlayerMove = _currentPlayerMove == PlayerMove.Player ? PlayerMove.Enemy : PlayerMove.Player;
 		}
 
 		//////////
