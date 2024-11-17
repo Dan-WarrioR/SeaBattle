@@ -3,9 +3,9 @@ using Source.MapGeneration;
 
 namespace Source.Input
 {
-    public class PlayerInput
+    public class PlayerInput : IInputHandler
 	{
-		public Vector2 CurrentPosition;
+		public Vector2 CurrentPosition { get; private set; }
 
 		public bool IsConfirmed { get; private set; } = false;
 
@@ -20,18 +20,11 @@ namespace Source.Input
 			_map = map;
 		}
 
-		public void UpdatePlayerInput(bool isAuto = false)
+		public void UpdateInput()
 		{
 			IsConfirmed = false;
 
-			if (!isAuto)
-			{
-				CalculateNativeInput();
-			}
-			else
-			{
-				CalculateAutoInput();
-			}		
+			CalculateNativeInput();		
 		}
 
 		private void CalculateNativeInput()
@@ -56,29 +49,8 @@ namespace Source.Input
 
 			if (_map.IsInBorders(CurrentPosition.X + delta.X, CurrentPosition.Y + delta.Y))
 			{
-				CurrentPosition.X += delta.X;
-				CurrentPosition.Y += delta.Y;
+				CurrentPosition += (delta.X, delta.Y);
 			}
-		}
-
-		private void CalculateAutoInput()
-		{
-			List<Vector2> freeCells = new();
-
-			for (int i = 0; i < _map.Size; i++)
-			{
-				for (int j = 0; j < _map.Size; j++)
-				{
-					if (_map.IsValidMove(j, i))
-					{
-						freeCells.Add(new(j, i));
-					}
-				}
-			}
-
-			CurrentPosition = freeCells[_random.Next(0, freeCells.Count)];
-
-			IsConfirmed = true;
 		}
 	}
 }
