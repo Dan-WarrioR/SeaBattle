@@ -27,15 +27,7 @@ namespace Source
 
 		public Game()
 		{
-			_playerMap = new(MapSize);
-			_playerMap.OnCellBombed += OnBombedCell;
-
-			_enemyMap = new(MapSize);
-			_enemyMap.OnCellBombed += OnBombedCell;
-
-			_renderer = new(_enemyMap, _playerMap);
-			_playerInput = new PlayerInput(_playerMap, Vector2.Zero);
-			_enemyInput = new RandomInput(_enemyMap, Vector2.Zero);
+			InitializeGame();
 		}
 
 		//////////
@@ -53,10 +45,33 @@ namespace Source
 			Console.CursorVisible = false;
 		}
 
+		private void InitializeGame()
+		{
+			_playerMap = new(MapSize);
+			_playerMap.OnCellBombed += OnBombedCell;
+
+			_enemyMap = new(MapSize);
+			_enemyMap.OnCellBombed += OnBombedCell;
+
+			_renderer = new(_enemyMap, _playerMap);
+			_playerInput = new PlayerInput(_enemyMap, Vector2.Zero);
+			_enemyInput = new RandomInput(_playerMap, Vector2.Zero);
+		}
+
+		private void ResetGame()
+		{
+			_playerMap.OnCellBombed -= OnBombedCell;
+			_enemyMap.OnCellBombed -= OnBombedCell;
+
+			InitializeGame();
+		}
+
 		private void PlayGameCycle()
 		{
 			do
 			{
+				ResetGame();
+
 				Draw();
 
 				while (!IsEndGame())
@@ -66,7 +81,7 @@ namespace Source
 					Draw();
 				}
 
-				DrawEndGameText();		
+				DrawEndGameText();
 			}
 			while (Console.ReadKey(true).Key == ConsoleKey.Y);
 		}	
@@ -82,12 +97,9 @@ namespace Source
 				return;
 			}
 
-			if (!map.TryBombCell(input.CurrentPosition))
-			{
-				SwitchTurn();
-			}
+			map.TryBombCell(input.CurrentPosition);
 		}
-
+		
 		private bool IsEndGame()
 		{
 			return _enemyMap.ShipsCount <= 0 || _playerMap.ShipsCount <= 0;

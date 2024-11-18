@@ -63,7 +63,7 @@ namespace Source.Rendering
 
 		public void DrawStats()
 		{
-			Console.WriteLine($"Enemy ships - {_enemyMap.ShipsCount} | My ships - {_playerMap.ShipsCount}");
+			Console.WriteLine($"\nEnemy ships - {_enemyMap.ShipsCount} \nMy ships - {_playerMap.ShipsCount}");
 		}
 
 		public void DrawEndGameText(bool playerWin)
