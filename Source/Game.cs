@@ -25,11 +25,6 @@ namespace Source
 		private IInputHandler _playerInput;
 		private IInputHandler _enemyInput;
 
-		public Game()
-		{
-			InitializeGame();
-		}
-
 		//////////
 
 		public void Start()
