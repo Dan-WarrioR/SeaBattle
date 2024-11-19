@@ -93,6 +93,7 @@ namespace Source
 		private void ProcessTurn()
 		{
 			(IInputHandler input, Map map) = _currentPlayerMove == PlayerMove.Player ? (_playerInput, _enemyMap) : (_enemyInput, _playerMap);
+			input.UpdateInput();
 
 			if (!IsValidInput(input))
 			{
@@ -104,8 +105,6 @@ namespace Source
 
 		private bool IsValidInput(IInputHandler input)
 		{
-			input.UpdateInput();
-
 			return input.IsConfirmed;
 		}
 
