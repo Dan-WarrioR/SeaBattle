@@ -27,8 +27,6 @@ namespace Source
 
 		private bool _isGameEnd = false;
 
-		//////////
-
 		public void Start()
 		{
 			InitializeConsoleSettings();
