@@ -59,8 +59,15 @@ namespace Source
 
 		private void ResetGame()
 		{
-			_playerMap.OnCellBombed -= OnBombedCell;
-			_enemyMap.OnCellBombed -= OnBombedCell;
+			if (_playerMap != null)
+			{
+				_playerMap.OnCellBombed -= OnBombedCell;
+			}
+
+			if (_enemyMap != null)
+			{
+				_enemyMap.OnCellBombed -= OnBombedCell;
+			}
 
 			InitializeGame();
 		}
@@ -89,19 +96,19 @@ namespace Source
 		{
 			(IInputHandler input, Map map) = _currentPlayerMove == PlayerMove.Player ? (_playerInput, _enemyMap) : (_enemyInput, _playerMap);
 
-			input.UpdateInput();
-
-			if (!input.IsConfirmed)
+			if (!IsValidInput(input))
 			{
 				return;
 			}
 
 			map.TryBombCell(input.CurrentPosition);
 		}
-		
-		private bool IsEndGame()
+
+		private bool IsValidInput(IInputHandler input)
 		{
-			return _enemyMap.ShipsCount <= 0 || _playerMap.ShipsCount <= 0;
+			input.UpdateInput();
+
+			return input.IsConfirmed;
 		}
 
 		private void SwitchTurn()
