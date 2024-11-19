@@ -25,6 +25,8 @@ namespace Source
 		private IInputHandler _playerInput;
 		private IInputHandler _enemyInput;
 
+		private bool _isGameEnd = false;
+
 		//////////
 
 		public void Start()
@@ -42,6 +44,8 @@ namespace Source
 
 		private void InitializeGame()
 		{
+			_isGameEnd = false;
+
 			_playerMap = new(MapSize);
 			_playerMap.OnCellBombed += OnBombedCell;
 
@@ -69,7 +73,7 @@ namespace Source
 
 				Draw();
 
-				while (!IsEndGame())
+				while (!_isGameEnd)
 				{
 					ProcessTurn();
 
@@ -78,7 +82,7 @@ namespace Source
 
 				DrawEndGameText();
 			}
-			while (Console.ReadKey(true).Key == ConsoleKey.Y);
+			while (WantPlayerRepeat());
 		}	
 
 		private void ProcessTurn()
@@ -105,12 +109,19 @@ namespace Source
 			_currentPlayerMove = _currentPlayerMove == PlayerMove.Player ? PlayerMove.Enemy : PlayerMove.Player;
 		}
 
+		private bool WantPlayerRepeat()
+		{
+			return Console.ReadKey(true).Key == ConsoleKey.Y;
+		}
+
 		private void OnBombedCell(CellState state)
 		{
 			if (state != CellState.Hit)
 			{
 				SwitchTurn();
 			}
+
+			_isGameEnd = _enemyMap.ShipsCount <= 0 || _playerMap.ShipsCount <= 0;
 		}
 
 		private void Draw()
