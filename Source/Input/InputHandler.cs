@@ -4,10 +4,12 @@ namespace Source.Input
 {
 	public interface IInputHandler
 	{
-		Vector2 CurrentPosition { get; }
+		public Vector2? CurrentPosition { get; }
 
-		bool IsConfirmed { get; }
+		public Vector2 FuturePosition { get; }
 
-		void UpdateInput();
+		public void UpdateInput();
+
+		public void ResetInput();
 	}
 }

@@ -1,46 +1,41 @@
-﻿using Source.MapGeneration;
-using Source.Tools.Math;
+﻿using Source.Tools.Math;
 
 namespace Source.Input
 {
 	public class RandomInput : IInputHandler
 	{
-		public Vector2 CurrentPosition { get; private set; } = Vector2.Zero;
+		public Vector2? CurrentPosition { get; private set; }
 
-		public bool IsConfirmed { get; private set; } = true;
+		public Vector2 FuturePosition { get; private set; }
 
-		private Map _map;
+		private List<Vector2> _validMoves = new(); 
 
 		private Random _random = new();
 
-		public RandomInput(Map map, Vector2 startedPosition)
+		public RandomInput(List<Vector2> validMoves, Vector2 startedPosition)
 		{
 			CurrentPosition = startedPosition;
 
-			_map = map;
+			_validMoves = validMoves;
 		}
 
 		public void UpdateInput()
 		{
-			List<Vector2> availableCells = new();
-
-			for (int y = 0; y < _map.Size; y++)
+			if (_validMoves.Count > 0)
 			{
-				for (int x = 0; x < _map.Size; x++)
-				{
-					if (_map.IsValidMove(x, y))
-					{
-						availableCells.Add(new Vector2(x, y));
-					}
-				}
-			}
+				int randomIndex = _random.Next(_validMoves.Count);
 
-			if (availableCells.Count > 0)
-			{
-				CurrentPosition = availableCells[_random.Next(availableCells.Count)];
+				CurrentPosition = _validMoves[randomIndex];
 
-				IsConfirmed = true;
+				FuturePosition = CurrentPosition.Value;
+
+				_validMoves.RemoveAt(randomIndex);
 			}
+		}
+
+		public void ResetInput()
+		{
+			CurrentPosition = null;
 		}
 	}
 }

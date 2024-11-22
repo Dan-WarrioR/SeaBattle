@@ -5,10 +5,10 @@
         public static Vector2 Zero => new(0, 0);
         public static Vector2 One => new(1, 1);
 
-        public int X;
-        public int Y;
+        public int X { get; }
+        public int Y { get; }
 
-        public Vector2(int x, int y)
+		public Vector2(int x, int y)
         {
             X = x;
             Y = y;

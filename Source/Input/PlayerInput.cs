@@ -1,29 +1,26 @@
 ﻿using Source.Tools.Math;
-using Source.MapGeneration;
 
 namespace Source.Input
 {
     public class PlayerInput : IInputHandler
 	{
-		public Vector2 CurrentPosition { get; private set; }
+		public Vector2? CurrentPosition { get; private set; }
 
-		public bool IsConfirmed { get; private set; } = false;
-
-		private Map _map;
+		public Vector2 FuturePosition { get; private set; }
 
 		private Random _random = new();
 
-		public PlayerInput(Map map, Vector2 startedPosition)
+		private Border _border;
+
+		public PlayerInput(Border border, Vector2 startedPosition)
 		{
-			CurrentPosition = startedPosition;
+			FuturePosition = startedPosition;
 			
-			_map = map;
+			_border = border;
 		}
 
 		public void UpdateInput()
 		{
-			IsConfirmed = false;
-
 			CalculateNativeInput();		
 		}
 
@@ -33,7 +30,7 @@ namespace Source.Input
 
 			if (key == ConsoleKey.Enter)
 			{
-				IsConfirmed = true;
+				CurrentPosition = FuturePosition;
 
 				return;
 			}
@@ -47,10 +44,25 @@ namespace Source.Input
 				_ => Vector2.Zero,
 			};
 
-			if (_map.IsInBorders(CurrentPosition.X + delta.X, CurrentPosition.Y + delta.Y))
+			if (IsInBorders(FuturePosition.X + delta.X, FuturePosition.Y + delta.Y))
 			{
-				CurrentPosition += (delta.X, delta.Y);
+				FuturePosition += (delta.X, delta.Y);
 			}
+		}
+
+		public void ResetInput()
+		{
+			if (CurrentPosition.HasValue)
+			{
+				FuturePosition = CurrentPosition.Value;
+			}		
+
+			CurrentPosition = null;
+		}
+
+		private bool IsInBorders(int x, int y)
+		{
+			return x >= _border.X && x < _border.Y && y >= _border.Z && y < _border.W;
 		}
 	}
 }
