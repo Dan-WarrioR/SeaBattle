@@ -8,10 +8,10 @@ namespace Source.Rendering
 	{
 		private const int SpaceBetweenMaps = 5;
 
-		private Map _enemyMap;
-		private Map _playerMap;
+		private IReadOnlyMap _enemyMap;
+		private IReadOnlyMap _playerMap;
 
-		public Renderer(Map enemyMap, Map playerMap)
+		public Renderer(IReadOnlyMap enemyMap, IReadOnlyMap playerMap)
 		{
 			_enemyMap = enemyMap;
 			_playerMap = playerMap;
@@ -31,7 +31,7 @@ namespace Source.Rendering
 			DrawStats();
 		}
 
-		public void DrawMap(Vector2 startPosition, bool isShipsVisible, Map map)
+		public void DrawMap(Vector2 startPosition, bool isShipsVisible, IReadOnlyMap map)
 		{
 			for (int i = 0; i < map.Size; i++)
 			{
@@ -39,14 +39,7 @@ namespace Source.Rendering
 				{
 					if (map.TryGetCell(j, i, out Cell cell))
 					{
-						CellState state = cell.State;
-
-						if (!isShipsVisible)
-						{
-							state = state == CellState.Ship ? CellState.Empty : state;
-						}
-
-						var iconRenderer = GetCellRender(state);
+						var iconRenderer = GetCellRender(cell, isShipsVisible);
 
 						WriteSymbolAtPlace(startPosition + (j, i), iconRenderer.color, iconRenderer.icon);
 					}
@@ -76,13 +69,18 @@ namespace Source.Rendering
 
 		//////////
 
-		private (ConsoleColor color, char icon) GetCellRender(CellState state)
+		private (ConsoleColor color, char icon) GetCellRender(Cell cell, bool isShipsVisible)
 		{
-			return state switch
+			if (!isShipsVisible && cell.IsShip && !cell.IsDestroyed)
 			{
-				CellState.Miss => (ColorsConfig.MissShotColor, IconsConfig.MissShotIcon),
-				CellState.Hit => (ColorsConfig.DestroyedShipColor, IconsConfig.DestroyedShipIcon),
-				CellState.Ship => (ColorsConfig.ShipColor, IconsConfig.ShipIcon),
+				return (ColorsConfig.SeaColor, IconsConfig.SeaIcon);
+			}
+
+			return cell switch
+			{
+				Cell when cell.IsDestroyed && !cell.IsShip => (ColorsConfig.MissShotColor, IconsConfig.MissShotIcon),
+				Cell when cell.IsDestroyed && cell.IsShip => (ColorsConfig.DestroyedShipColor, IconsConfig.DestroyedShipIcon),
+				Cell when cell.IsShip => (ColorsConfig.ShipColor, IconsConfig.ShipIcon),
 				_ => (ColorsConfig.SeaColor, IconsConfig.SeaIcon),
 			};
 		}

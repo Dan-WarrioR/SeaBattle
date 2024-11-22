@@ -2,7 +2,7 @@
 
 namespace Source.MapGeneration
 {
-	public class Map
+	public class Map : IReadOnlyMap
 	{
 		private const int ShipFrequency = 10;
 
@@ -10,7 +10,7 @@ namespace Source.MapGeneration
 
 		public int ShipsCount { get; private set; } = 0;
 
-		public event Action<CellState> OnCellBombed;
+		public event Action<Cell> OnCellBombed;
 
 		private Cell[,] _map;
 
@@ -38,14 +38,22 @@ namespace Source.MapGeneration
 			return true;
 		}
 
-		public bool TryBombCell(Vector2 position)
+		public bool TryBombCell(Vector2? position)
 		{
-			if (!IsValidMove(position.X, position.Y))
+			if (!position.HasValue)
 			{
 				return false;
 			}
 
-			_map[position.X, position.Y].BombCell();
+			int x = position.Value.X;
+			int y = position.Value.Y;
+
+			if (!IsValidMove(x, y))
+			{
+				return false;
+			}
+
+			_map[x, y].BombCell();
 
 			return true;
 		}
@@ -62,6 +70,24 @@ namespace Source.MapGeneration
 			cell = _map[x, y];
 
 			return true;
+		}
+
+		public List<Vector2> GetAllAvailablesMoves()
+		{
+			List<Vector2> availableCells = new();
+
+			for (int i = 0; i < Size; i++)
+			{
+				for (int j = 0; j < Size; j++)
+				{
+					if (_map[i, j].CanBombCell())
+					{
+						availableCells.Add(new(i, j));
+					}
+				}
+			}
+
+			return availableCells;
 		}
 
 		private void FillMap()
@@ -91,14 +117,14 @@ namespace Source.MapGeneration
 			}
 		}
 
-		private void OnBombed(CellState state)
+		private void OnBombed(Cell cell)
 		{
-			if (state == CellState.Hit)
+			if (cell.IsDestroyed && cell.IsShip)
 			{
 				ShipsCount--;
 			}
 
-			OnCellBombed?.Invoke(state);
+			OnCellBombed?.Invoke(cell);
 		}
 	}
 }
