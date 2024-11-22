@@ -1,39 +1,32 @@
 ﻿namespace Source.MapGeneration
 {
-	public enum CellState
-	{
-		Empty,
-		Ship,
-		Hit,
-		Miss
-	}
-	
 	public class Cell
 	{
-		public CellState State { get; private set; } = CellState.Empty;
+		public bool IsShip { get; private set; } = false;
+		public bool IsDestroyed { get; private set; } = false;
 
-		public event Action<CellState> OnBombed;
-
-		public Cell()
-		{
-			State = CellState.Empty;
-		}
+		public event Action<Cell> OnBombed;
 
 		public void PlaceShip()
 		{
-			State = CellState.Ship;
+			IsShip = true;
 		}
 		
 		public void BombCell()
 		{
-			State = State == CellState.Ship ? CellState.Hit : CellState.Miss;
+			if (IsDestroyed)
+			{
+				return;
+			}
 
-			OnBombed?.Invoke(State);
+			IsDestroyed = true;
+
+			OnBombed?.Invoke(this);
 		}
 
 		public bool CanBombCell()
 		{
-			return State == CellState.Empty || State == CellState.Ship;
+			return !IsDestroyed;
 		}
 	}
 }
