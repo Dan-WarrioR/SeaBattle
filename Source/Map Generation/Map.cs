@@ -2,7 +2,7 @@
 
 namespace Source.MapGeneration
 {
-	public class Map : IReadOnlyMap
+	public class Map
 	{
 		private const int ShipFrequency = 10;
 

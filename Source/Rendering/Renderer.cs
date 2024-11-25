@@ -8,13 +8,13 @@ namespace Source.Rendering
 	{
 		private const int SpaceBetweenMaps = 5;
 
-		private IReadOnlyMap _enemyMap;
-		private IReadOnlyMap _playerMap;
+		private Map _firstPlayerMap;
+		private Map _secondPlayerMap;
 
-		public Renderer(IReadOnlyMap enemyMap, IReadOnlyMap playerMap)
+		public Renderer(Map firstPlayerMap, Map secondPlayerMap)
 		{
-			_enemyMap = enemyMap;
-			_playerMap = playerMap;
+			_firstPlayerMap = firstPlayerMap;
+			_secondPlayerMap = secondPlayerMap;
 		}
 
 		//////////
@@ -23,15 +23,15 @@ namespace Source.Rendering
 		{
 			Console.Clear();
 
-			DrawMap(Vector2.Zero, false, _enemyMap);
-			DrawMap(new(_playerMap.Size + SpaceBetweenMaps, 0), true, _playerMap);
+			DrawMap(Vector2.Zero, false, _firstPlayerMap);
+			DrawMap(new(_secondPlayerMap.Size + SpaceBetweenMaps, 0), true, _secondPlayerMap);
 
 			DrawPlayerCursor(playerCursor);
 
 			DrawStats();
 		}
 
-		public void DrawMap(Vector2 startPosition, bool isShipsVisible, IReadOnlyMap map)
+		public void DrawMap(Vector2 startPosition, bool isShipsVisible, Map map)
 		{
 			for (int i = 0; i < map.Size; i++)
 			{
@@ -56,7 +56,7 @@ namespace Source.Rendering
 
 		public void DrawStats()
 		{
-			Console.WriteLine($"\nEnemy ships - {_enemyMap.ShipsCount} \nMy ships - {_playerMap.ShipsCount}");
+			Console.WriteLine($"\nEnemy ships - {_firstPlayerMap.ShipsCount} \nMy ships - {_secondPlayerMap.ShipsCount}");
 		}
 
 		public void DrawEndGameText(bool playerWin)
