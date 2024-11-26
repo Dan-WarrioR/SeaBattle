@@ -38,11 +38,11 @@ namespace Source.MapGeneration
 			return true;
 		}
 
-		public bool TryBombCell(Vector2? position)
+		public void BombCell(Vector2? position)
 		{
 			if (!position.HasValue)
 			{
-				return false;
+				return;
 			}
 
 			int x = position.Value.X;
@@ -50,12 +50,10 @@ namespace Source.MapGeneration
 
 			if (!IsValidMove(x, y))
 			{
-				return false;
+				return;
 			}
 
 			_map[x, y].BombCell();
-
-			return true;
 		}
 
 		public bool TryGetCell(int x, int y, out Cell cell)

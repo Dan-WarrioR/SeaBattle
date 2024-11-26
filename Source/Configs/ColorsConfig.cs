@@ -7,5 +7,6 @@
 		public const ConsoleColor MissShotColor = ConsoleColor.Gray;
 		public const ConsoleColor SeaColor = ConsoleColor.Gray;
 		public const ConsoleColor ShipColor = ConsoleColor.DarkBlue;
+		public const ConsoleColor ScannedAreaColor = ConsoleColor.Green;
 	}
 }
