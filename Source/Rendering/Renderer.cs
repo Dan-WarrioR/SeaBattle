@@ -71,18 +71,23 @@ namespace Source.Rendering
 
 		private (ConsoleColor color, char icon) GetCellRender(Cell cell, bool isShipsVisible)
 		{
-			if (!isShipsVisible && cell.IsShip && !cell.IsDestroyed)
-			{
-				return (ColorsConfig.SeaColor, IconsConfig.SeaIcon);
-			}
+			(ConsoleColor color, char icon) cellRenderer;
 
-			return cell switch
+			cellRenderer = cell switch
 			{
+				Cell when !isShipsVisible && !cell.IsScaned && cell.IsShip && !cell.IsDestroyed => (ColorsConfig.SeaColor, IconsConfig.SeaIcon),
 				Cell when cell.IsDestroyed && !cell.IsShip => (ColorsConfig.MissShotColor, IconsConfig.MissShotIcon),
 				Cell when cell.IsDestroyed && cell.IsShip => (ColorsConfig.DestroyedShipColor, IconsConfig.DestroyedShipIcon),
 				Cell when cell.IsShip => (ColorsConfig.ShipColor, IconsConfig.ShipIcon),
 				_ => (ColorsConfig.SeaColor, IconsConfig.SeaIcon),
 			};
+
+			if (cell.IsScaned)
+			{
+				cellRenderer.color = ColorsConfig.ScannedAreaColor;
+			}
+
+			return cellRenderer;
 		}
 
 		//////////
