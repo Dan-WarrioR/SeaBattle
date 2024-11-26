@@ -136,14 +136,14 @@ namespace Source
 
 
 
-		private bool IsEndGame()
-		{
-			return _onePlayerLostAllShips;
-		}
-
 		private bool WantPlayerRepeat()
 		{
 			return Console.ReadKey(true).Key == ConsoleKey.Y;
+		}
+
+		private bool IsEndGame()
+		{
+			return _onePlayerLostAllShips;
 		}
 
 
