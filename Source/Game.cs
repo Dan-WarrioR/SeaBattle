@@ -1,7 +1,5 @@
-﻿using Source.Input;
-using Source.MapGeneration;
+﻿using Source.MapGeneration;
 using Source.Rendering;
-using Source.Tools.Math;
 using Source.Characters;
 
 namespace Source
@@ -17,7 +15,8 @@ namespace Source
 
 		private Player _currentPlayer;
 
-		private bool _isGameEnd = false;
+		private bool _onePlayerLostAllShips = false;
+		private bool _onShipBombed = false;
 
 		public void Start()
 		{
@@ -34,13 +33,15 @@ namespace Source
 
 				Draw();
 
-				while (!_isGameEnd)
+				while (!IsEndGame())
 				{
 					CalculateInput();
 
 					ProcessTurn();
 
 					Draw();
+
+					ResetTemporaryChanges();
 				}
 
 				DrawEndGameText();
@@ -65,14 +66,16 @@ namespace Source
 
 		private void InitializeGame()
 		{
-			_isGameEnd = false;
+			_onePlayerLostAllShips = false;
 
-			_player = new(new(MapSize), new PlayerInput(new(0, MapSize, 0, MapSize), Vector2.Zero));
+			Map enemyMap = new(MapSize);
+
+			_player = new(false, enemyMap);
 			_player.Map.OnCellBombed += OnBombedCell;
 
 			Map playerMap = new(MapSize);
 
-			_enemy = new(playerMap, new RandomInput(playerMap.GetAllAvailablesMoves(), Vector2.Zero));
+			_enemy = new(true, playerMap);
 			_enemy.Map.OnCellBombed += OnBombedCell;
 
 			_renderer = new(_player.Map, _enemy.Map);
@@ -82,12 +85,41 @@ namespace Source
 
 		private void CalculateInput()
 		{
-			_currentPlayer.UpdateInput();
+			_currentPlayer.CalculateInput();
+		}
+
+		private void ResetTemporaryChanges()
+		{
+			_currentPlayer.ResetAbilities();
 		}
 
 		private void ProcessTurn()
 		{
+			ApplyAbility();
+
+			if (!_currentPlayer.IsConfirmed)
+			{
+				return;
+			}
+
 			_currentPlayer.TryBombCell();
+
+			if (!_onShipBombed)
+			{
+				SwitchTurn();
+
+				_onShipBombed = false;
+			}
+		}
+
+		private void ApplyAbility()
+		{
+			var ability = _currentPlayer.GetSelectedAbility();
+
+			if (ability != null)
+			{
+				ability.Apply(_currentPlayer.CurrentPosition);
+			}
 		}
 
 		private void SwitchTurn()
@@ -95,24 +127,30 @@ namespace Source
 			_currentPlayer = _currentPlayer == _player ? _enemy : _player;
 		}
 
+		private void OnBombedCell(Cell cell)
+		{
+			_onShipBombed = cell.IsShip;	
+
+			_onePlayerLostAllShips = _player.ShipsCount <= 0 || _enemy.ShipsCount <= 0;
+		}
+
+
+
+		private bool IsEndGame()
+		{
+			return _onePlayerLostAllShips;
+		}
+
 		private bool WantPlayerRepeat()
 		{
 			return Console.ReadKey(true).Key == ConsoleKey.Y;
 		}
 
-		private void OnBombedCell(Cell cell)
-		{
-			if (!cell.IsShip)
-			{
-				SwitchTurn();
-			}
 
-			_isGameEnd = _player.ShipsCount <= 0 || _enemy.ShipsCount <= 0;
-		}
 
 		private void Draw()
 		{
-			_renderer.Draw(_player.Input.FuturePosition);
+			_renderer.Draw(_player.CurrentPosition);
 		}
 
 		private void DrawEndGameText()
