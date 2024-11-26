@@ -5,6 +5,8 @@
 		public bool IsShip { get; private set; } = false;
 		public bool IsDestroyed { get; private set; } = false;
 
+		public bool IsScaned { get; set; } = false;
+
 		public event Action<Cell> OnBombed;
 
 		public void PlaceShip()
