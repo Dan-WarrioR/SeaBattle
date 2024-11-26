@@ -16,7 +16,7 @@ namespace Source
 		private Player _currentPlayer;
 
 		private bool _onePlayerLostAllShips = false;
-		private bool _onShipBombed = false;
+		private bool _isShipBombed = false;
 
 		public void Start()
 		{
@@ -104,11 +104,11 @@ namespace Source
 
 			_currentPlayer.TryBombCell();
 
-			if (!_onShipBombed)
+			if (!_isShipBombed)
 			{
 				SwitchTurn();
 
-				_onShipBombed = false;
+				_isShipBombed = false;
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace Source
 
 		private void OnBombedCell(Cell cell)
 		{
-			_onShipBombed = cell.IsShip;	
+			_isShipBombed = cell.IsShip;	
 
 			_onePlayerLostAllShips = _player.ShipsCount <= 0 || _enemy.ShipsCount <= 0;
 		}
