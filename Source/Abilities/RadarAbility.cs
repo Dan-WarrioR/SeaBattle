@@ -5,11 +5,11 @@ namespace Source.Abilities
 {
 	public class RadarAbility : IAbility
 	{
-		private const int ScanSquareSize = 3;
+		private const int ScanSquareSize = 4;
 
 		public bool IsInfinityUse { get; } = false;
 
-		public int UsesCount { get; private set; } = 2;
+		public int UsesCount { get; private set; } = 1;
 
 		private Vector2 _playerPosition;
 
