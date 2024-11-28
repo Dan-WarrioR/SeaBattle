@@ -16,17 +16,17 @@
 
 		public static Vector2 operator +(Vector2 first, Vector2 second)
 		{
-			return new Vector2(first.X + second.X, first.Y + second.Y);
+			return new (first.X + second.X, first.Y + second.Y);
 		}
 
 		public static Vector2 operator -(Vector2 first, Vector2 second)
 		{
-			return new Vector2(first.X - second.X, first.Y - second.Y);
+			return new (first.X - second.X, first.Y - second.Y);
 		}
 
-		public static Vector2 operator +(Vector2 first, (int X, int Y) tuple)
+		public static explicit operator Vector2((int X, int Y) tuple)
 		{
-			return new Vector2(first.X + tuple.X, first.Y + tuple.Y);
+			return new (tuple.X, tuple.Y);
 		}
 	}
 }

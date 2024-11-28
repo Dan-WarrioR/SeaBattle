@@ -41,7 +41,7 @@ namespace Source.Rendering
 					{
 						var iconRenderer = GetCellRender(cell, isShipsVisible);
 
-						WriteSymbolAtPlace(startPosition + (j, i), iconRenderer.color, iconRenderer.icon);
+						WriteSymbolAtPlace(startPosition + (Vector2)(j, i), iconRenderer.color, iconRenderer.icon);
 					}
 				}
 			}

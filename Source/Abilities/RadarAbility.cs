@@ -3,7 +3,7 @@ using Source.Tools.Math;
 
 namespace Source.Abilities
 {
-	public class RadarAbility : IAbility
+	public class RadarAbility : BaseAbility
 	{
 		private const int ScanSquareSize = 4;
 
@@ -20,7 +20,7 @@ namespace Source.Abilities
 			_map = map;
 		}
 
-		public void Apply(Vector2 position)
+		public override void Apply(Vector2 position)
 		{
 			if (!IsInfinityUse && UsesCount <= 0)
 			{
@@ -34,7 +34,7 @@ namespace Source.Abilities
 			ChangeCellVisibility(true);
 		}
 
-		public void Reset()
+		public override void Reset()
 		{
 			ChangeCellVisibility(false);
 		}	

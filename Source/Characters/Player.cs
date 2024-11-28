@@ -16,7 +16,7 @@ namespace Source.Characters
 
 		public Map Map { get; private set; }
 
-		private List<IAbility> _abilities = new();
+		private List<BaseAbility> _abilities = new();
 		private int _selectedAbilityIndex = -1;
 
 		private List<Vector2> _validMoves = new();
@@ -52,7 +52,7 @@ namespace Source.Characters
 			Map.BombCell(CurrentPosition);
 		}
 
-		public IAbility GetSelectedAbility()
+		public BaseAbility GetSelectedAbility()
 		{
 			if (_selectedAbilityIndex < 0 || _selectedAbilityIndex >= _abilities.Count)
 				return null;
