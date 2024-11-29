@@ -1,12 +1,22 @@
 ﻿using Source.MapGeneration;
 using Source.Rendering;
 using Source.Characters;
+using Source.Abilities;
 
 namespace Source
 {
+	public enum GameMode
+	{
+		PVE,
+		EVE,
+		PVP,
+	}
+
 	public class Game
 	{		
 		private const int MapSize = 10;
+
+		private GameMode _currentGameMode;
 
 		private Renderer _renderer;
 
@@ -17,6 +27,8 @@ namespace Source
 
 		private bool _onePlayerLostAllShips = false;
 		private bool _isShipBombed = false;
+
+		private List<BaseAbility> _activeAbilities = new();
 
 		public void Start()
 		{
@@ -40,8 +52,6 @@ namespace Source
 					ProcessTurn();
 
 					Draw();
-
-					ResetTemporaryChanges();
 				}
 
 				DrawEndGameText();
@@ -61,6 +71,8 @@ namespace Source
 				_player.Map.OnCellBombed -= OnBombedCell;
 			}
 
+			SelectGameMode();
+
 			InitializeGame();
 		}
 
@@ -69,33 +81,58 @@ namespace Source
 			_onePlayerLostAllShips = false;
 
 			Map enemyMap = new(MapSize);
-
-			_player = new(false, enemyMap);
-			_player.Map.OnCellBombed += OnBombedCell;
-
 			Map playerMap = new(MapSize);
 
-			_enemy = new(true, playerMap);
+			(Player player, Player enemy) = _currentGameMode switch
+			{
+				GameMode.PVP => (new Player(false, enemyMap), new Player(false, playerMap)),
+				GameMode.PVE => (new Player(false, enemyMap), new Player(true, playerMap)),
+				GameMode.EVE => (new Player(true, enemyMap), new Player(true, playerMap)),
+			};
+
+			_player = player;
+			_enemy = enemy;
+
+			_player.Map.OnCellBombed += OnBombedCell;
 			_enemy.Map.OnCellBombed += OnBombedCell;
 
-			_renderer = new(_player.Map, _enemy.Map);
+			_renderer = new(_currentGameMode, _player, _enemy);
 
 			_currentPlayer = _player;
-		}	
+		}
+
+		private void SelectGameMode()
+		{
+			DrawAvailableModes();
+
+			_currentGameMode = GetGameMode();
+		}
+
+		private GameMode GetGameMode()
+		{
+			while (true)
+			{
+				var key = Console.ReadKey(true).Key;
+
+				int keyAsNumber = key - ConsoleKey.D1;
+
+				if (Enum.IsDefined(typeof(GameMode), keyAsNumber))
+				{
+					return (GameMode)keyAsNumber;
+				}
+			}
+		}
 
 		private void CalculateInput()
 		{
 			_currentPlayer.CalculateInput();
 		}
 
-		private void ResetTemporaryChanges()
-		{
-			_currentPlayer.ResetAbilities();
-		}
-
 		private void ProcessTurn()
 		{
-			ApplyAbility();
+			ResetPreviousActiveAbilities();
+
+			ProcessAbility();
 
 			if (!_currentPlayer.IsConfirmed)
 			{
@@ -110,15 +147,27 @@ namespace Source
 
 				_isShipBombed = false;
 			}
+
+			_currentPlayer.ResetCurrentAbility();
 		}
 
-		private void ApplyAbility()
+		private void ProcessAbility()
 		{
 			var ability = _currentPlayer.GetSelectedAbility();
 
 			if (ability != null)
 			{
 				ability.Apply(_currentPlayer.CurrentPosition);
+
+				_activeAbilities.Add(ability);
+			}
+		}
+
+		private void ResetPreviousActiveAbilities()
+		{
+			foreach (var ability in _activeAbilities)
+			{
+				ability.Reset();
 			}
 		}
 
@@ -148,9 +197,22 @@ namespace Source
 
 
 
+		private void DrawAvailableModes()
+		{
+			Console.Clear();
+
+			Console.WriteLine(
+				"==================================================" +
+				"\nChoose game mode: " +
+				"\n 1 - Player vs Enemy (PVE)" +
+				"\n 2 - Enemy vs Enemy (EVE)" +
+				"\n 3 - Player vs Player (PVP)" +
+				"\n==================================================");
+		}
+
 		private void Draw()
 		{
-			_renderer.Draw(_player.CurrentPosition);
+			_renderer.Draw();
 		}
 
 		private void DrawEndGameText()

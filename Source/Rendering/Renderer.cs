@@ -1,4 +1,5 @@
-﻿using Source.Configs;
+﻿using Source.Characters;
+using Source.Configs;
 using Source.MapGeneration;
 using Source.Tools.Math;
 
@@ -8,25 +9,31 @@ namespace Source.Rendering
 	{
 		private const int SpaceBetweenMaps = 5;
 
-		private Map _firstPlayerMap;
-		private Map _secondPlayerMap;
+		private Player _firstPlayer;
+		private Player _secondPlayer;
 
-		public Renderer(Map firstPlayerMap, Map secondPlayerMap)
+		private GameMode _gameMode;
+
+		public Renderer(GameMode gameMode, Player firstPlayer, Player secondPlayer)
 		{
-			_firstPlayerMap = firstPlayerMap;
-			_secondPlayerMap = secondPlayerMap;
+			_gameMode = gameMode;
+
+			_firstPlayer = firstPlayer;
+			_secondPlayer = secondPlayer;
 		}
 
-		//////////
-
-		public void Draw(Vector2 playerCursor)
+		public void Draw()
 		{
 			Console.Clear();
 
-			DrawMap(Vector2.Zero, false, _firstPlayerMap);
-			DrawMap(new(_secondPlayerMap.Size + SpaceBetweenMaps, 0), true, _secondPlayerMap);
+			DrawMap(Vector2.Zero, _gameMode == GameMode.EVE, _firstPlayer.Map);
+			DrawMap(new(_secondPlayer.Map.Size + SpaceBetweenMaps, 0), _gameMode != GameMode.PVE, _secondPlayer.Map);
 
-			DrawPlayerCursor(playerCursor);
+			DrawPlayerCursor(_firstPlayer.CurrentPosition);
+
+			Vector2 cursorPosition = new(_secondPlayer.CurrentPosition.X + _secondPlayer.Map.Size + SpaceBetweenMaps, _secondPlayer.CurrentPosition.Y);
+
+			DrawPlayerCursor(cursorPosition);
 
 			DrawStats();
 		}
@@ -56,7 +63,7 @@ namespace Source.Rendering
 
 		public void DrawStats()
 		{
-			Console.WriteLine($"\nEnemy ships - {_firstPlayerMap.ShipsCount} \nMy ships - {_secondPlayerMap.ShipsCount}");
+			Console.WriteLine($"\nEnemy ships - {_firstPlayer.ShipsCount} \nMy ships - {_secondPlayer.ShipsCount}");
 		}
 
 		public void DrawEndGameText(bool playerWin)
@@ -66,8 +73,6 @@ namespace Source.Rendering
 			Console.WriteLine(playerWin ? "You Won!" : "You Lose!");
 			Console.WriteLine("Play again? (Y / N)");
 		}
-
-		//////////
 
 		private (ConsoleColor color, char icon) GetCellRender(Cell cell, bool isShipsVisible)
 		{
@@ -89,8 +94,6 @@ namespace Source.Rendering
 
 			return cellRenderer;
 		}
-
-		//////////
 
 		private void WriteColoredSymbol(ConsoleColor color, char symbol)
 		{

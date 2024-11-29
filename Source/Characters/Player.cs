@@ -55,19 +55,16 @@ namespace Source.Characters
 		public BaseAbility GetSelectedAbility()
 		{
 			if (_selectedAbilityIndex < 0 || _selectedAbilityIndex >= _abilities.Count)
+			{
 				return null;
+			}			
 
 			return _abilities[_selectedAbilityIndex];
 		}
 
-		public void ResetAbilities()
+		public void ResetCurrentAbility()
 		{
 			_selectedAbilityIndex = -1;
-
-			foreach (var ability in _abilities)
-			{
-				ability.Reset();
-			}
 		}
 
 		private void CalculateNativeInput()
@@ -118,6 +115,8 @@ namespace Source.Characters
 				CurrentPosition = _validMoves[randomIndex];
 
 				_validMoves.RemoveAt(randomIndex);
+
+				Thread.Sleep(500);
 
 				IsConfirmed = true;
 			}
