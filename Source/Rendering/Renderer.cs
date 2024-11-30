@@ -63,7 +63,14 @@ namespace Source.Rendering
 
 		public void DrawStats()
 		{
-			Console.WriteLine($"\nEnemy ships - {_firstPlayer.ShipsCount} \nMy ships - {_secondPlayer.ShipsCount}");
+			if (_gameMode == GameMode.PVE)
+			{
+				Console.WriteLine($"\nEnemy ships - {_firstPlayer.ShipsCount} \nMy ships - {_secondPlayer.ShipsCount}");
+
+				return;
+			}
+
+			Console.WriteLine($"\nLeft map ships - {_firstPlayer.ShipsCount} \nRight map ships - {_secondPlayer.ShipsCount}");
 		}
 
 		public void DrawEndGameText(bool playerWin)
