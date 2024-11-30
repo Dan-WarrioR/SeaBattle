@@ -169,6 +169,8 @@ namespace Source
 			{
 				ability.Reset();
 			}
+
+			_activeAbilities.Clear();
 		}
 
 		private void SwitchTurn()
