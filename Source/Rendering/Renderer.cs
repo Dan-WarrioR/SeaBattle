@@ -9,6 +9,9 @@ namespace Source.Rendering
 	{
 		private const int SpaceBetweenMaps = 5;
 
+		private bool FirstPlayerMapVisible => _gameMode == GameMode.EVE;
+		private bool SecondPlayerMapVisible => _gameMode != GameMode.PVP;
+
 		private Player _firstPlayer;
 		private Player _secondPlayer;
 
@@ -26,8 +29,8 @@ namespace Source.Rendering
 		{
 			Console.Clear();
 
-			DrawMap(Vector2.Zero, _gameMode == GameMode.EVE, _firstPlayer.Map);
-			DrawMap(new(_secondPlayer.Map.Size + SpaceBetweenMaps, 0), _gameMode != GameMode.PVE, _secondPlayer.Map);
+			DrawMap(Vector2.Zero, FirstPlayerMapVisible, _firstPlayer.Map);
+			DrawMap(new(_secondPlayer.Map.Size + SpaceBetweenMaps, 0), SecondPlayerMapVisible, _secondPlayer.Map); 
 
 			DrawPlayerCursor(_firstPlayer.CurrentPosition);
 
@@ -71,14 +74,6 @@ namespace Source.Rendering
 			}
 
 			Console.WriteLine($"\nLeft map ships - {_firstPlayer.ShipsCount} \nRight map ships - {_secondPlayer.ShipsCount}");
-		}
-
-		public void DrawEndGameText(bool playerWin)
-		{
-			Console.Clear();
-
-			Console.WriteLine(playerWin ? "You Won!" : "You Lose!");
-			Console.WriteLine("Play again? (Y / N)");
 		}
 
 		private (ConsoleColor color, char icon) GetCellRender(Cell cell, bool isShipsVisible)

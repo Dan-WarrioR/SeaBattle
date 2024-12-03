@@ -4,8 +4,8 @@ public class Boot
 {
 	static void Main(string[] args)
 	{
-		Game game = new();
+		Application application = new();
 
-		game.Start();
+		application.Launch();
 	}
 }
