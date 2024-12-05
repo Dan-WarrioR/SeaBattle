@@ -16,14 +16,15 @@ namespace Source
 	{
 		private const int MapSize = 10;
 
-		public (int firstPlayer, int secondPlayer) Scores { get; private set; } = (0, 0);
-
 		private GameMode _currentGameMode;
 
 		private Renderer _renderer;
 
 		private Player _player;
+		private int _playerScore = 0;
+
 		private Player _enemy;
+		private int _enemyScore = 0;
 
 		private Player _currentPlayer;
 
@@ -44,15 +45,9 @@ namespace Source
 			while (!IsRoundEnd())
 			{
 				CalculateInput();
-
 				ProcessTurn();
-
 				Draw();
 			}
-
-			UpdatePlayersScore();
-
-			DrawRoundScore();
 		}
 
 		public void ResetGame()
@@ -113,11 +108,13 @@ namespace Source
 
 			_currentPlayer.TryBombCell();
 
+			UpdateScore();
+
 			if (!_isShipBombed)
 			{
 				SwitchTurn();
 
-				_isShipBombed = false;
+				_isShipBombed = false;			
 			}
 
 			_currentPlayer.ResetCurrentAbility();
@@ -157,23 +154,29 @@ namespace Source
 			_onePlayerLostAllShips = _player.ShipsCount <= 0 || _enemy.ShipsCount <= 0;
 		}
 
-		private void UpdatePlayersScore()
+		private void UpdateScore()
 		{
-			var scores = Scores;
-
-			if (_player.ShipsCount <= 0)
+			if (_currentPlayer.ShipsCount > 0)
 			{
-				scores.firstPlayer++;
+				return;
 			}
-			else if (_enemy.ShipsCount <= 0)
-			{
-				scores.secondPlayer++;
-			}	
 
-			Scores = scores;
+			if (_currentPlayer == _player)
+			{
+				_playerScore++;
+
+				return;
+			}
+
+			_enemyScore++;
 		}
 
 
+
+		public bool IsGameEnd()
+		{
+			return _playerScore >= 3 || _enemyScore >= 3;
+		}
 
 		private bool IsRoundEnd()
 		{
@@ -182,18 +185,18 @@ namespace Source
 
 
 
-		private void Draw()
-		{
-			_renderer.Draw();
-		}
-
-		private void DrawRoundScore()
+		public void DrawRoundScore()
 		{
 			Console.Clear();
 
-			Console.WriteLine($"\tCurrent Score: {Scores.firstPlayer} | {Scores.secondPlayer}");
+			Console.WriteLine($"\tCurrent Score: {_playerScore} | {_enemyScore}");
 
 			Thread.Sleep(5000);
 		}
+
+		private void Draw()
+		{
+			_renderer.Draw();
+		}	
 	}
 }

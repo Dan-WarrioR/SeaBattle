@@ -2,22 +2,20 @@
 {
 	public class Application
 	{
-		private Game _game;
-
 		public void Launch()
 		{
 			InitializeConsoleSettings();
 
 			DrawAvailableModes();
 
-			_game = new Game(GetGameMode());
+			var game = new Game(GetGameMode());
 
-			do
+			while (!game.IsGameEnd())
 			{
-				_game.ResetGame();
-
-				_game.PlayGameCycle();
-			} while (IsEndGame());	
+				game.ResetGame();
+				game.PlayGameCycle();
+				game.DrawRoundScore();
+			}	
 		}
 
 		private GameMode GetGameMode()
@@ -42,21 +40,6 @@
 		}
 
 
-
-		private bool IsEndGame()
-		{
-			return _game.Scores.firstPlayer < 3 && _game.Scores.secondPlayer < 3;
-		}	
-
-
-
-		private void DrawCongratulation()
-		{
-			Console.Clear();
-
-			Console.WriteLine("Congratulations!!!");
-			Console.WriteLine($"You win this game with {_game.Scores.firstPlayer} | {_game.Scores.secondPlayer} scores!");
-		}
 
 		private void DrawAvailableModes()
 		{
