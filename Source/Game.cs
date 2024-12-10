@@ -38,6 +38,16 @@ namespace Source
 			_currentGameMode = gameMode;
 		}
 
+		public void PlayGame()
+		{
+			while (!IsGameEnd())
+			{
+				ResetGame();
+				PlayGameCycle();
+				DrawRoundScore();
+			}
+		}
+
 		public void PlayGameCycle()
 		{
 			Draw();

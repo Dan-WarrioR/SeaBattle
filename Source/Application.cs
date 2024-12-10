@@ -8,14 +8,7 @@
 
 			DrawAvailableModes();
 
-			var game = new Game(GetGameMode());
-
-			while (!game.IsGameEnd())
-			{
-				game.ResetGame();
-				game.PlayGameCycle();
-				game.DrawRoundScore();
-			}	
+			LaunchGame();
 		}
 
 		private GameMode GetGameMode()
@@ -39,6 +32,12 @@
 			Console.CursorVisible = false;
 		}
 
+		private void LaunchGame()
+		{
+			var game = new Game(GetGameMode());
+
+			game.PlayGame();
+		}
 
 
 		private void DrawAvailableModes()
