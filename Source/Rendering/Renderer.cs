@@ -1,40 +1,36 @@
-﻿using Source.Characters;
+﻿using Source.Users;
 using Source.Configs;
 using Source.MapGeneration;
 using Source.Tools.Math;
 
 namespace Source.Rendering
 {
-	public class Renderer
+    public class Renderer
 	{
 		private const int SpaceBetweenMaps = 5;
 
-		private bool FirstPlayerMapVisible => _gameMode == GameMode.EVE;
-		private bool SecondPlayerMapVisible => _gameMode != GameMode.PVP;
+		private bool FirstPlayerMapVisible => _player1.IsAi && (!_player2.IsAi || _player2.IsAi);
+		private bool SecondPlayerMapVisible => _player2.IsAi && (!_player1.IsAi || _player1.IsAi);
 
-		private Player _firstPlayer;
-		private Player _secondPlayer;
+		private Player _player1;
+		private Player _player2;
 
-		private GameMode _gameMode;
-
-		public Renderer(GameMode gameMode, Player firstPlayer, Player secondPlayer)
+		public Renderer(Player player1, Player player2)
 		{
-			_gameMode = gameMode;
-
-			_firstPlayer = firstPlayer;
-			_secondPlayer = secondPlayer;
+			_player1 = player1;
+			_player2 = player2;
 		}
 
 		public void Draw()
 		{
 			Console.Clear();
 
-			DrawMap(Vector2.Zero, FirstPlayerMapVisible, _firstPlayer.Map);
-			DrawMap(new(_secondPlayer.Map.Size + SpaceBetweenMaps, 0), SecondPlayerMapVisible, _secondPlayer.Map); 
+			DrawMap(Vector2.Zero, FirstPlayerMapVisible, _player1.Map);
+			DrawMap(new(_player2.Map.Size + SpaceBetweenMaps, 0), SecondPlayerMapVisible, _player2.Map); 
 
-			DrawPlayerCursor(_firstPlayer.CurrentPosition);
+			DrawPlayerCursor(_player1.CurrentPosition);
 
-			Vector2 cursorPosition = new(_secondPlayer.CurrentPosition.X + _secondPlayer.Map.Size + SpaceBetweenMaps, _secondPlayer.CurrentPosition.Y);
+			Vector2 cursorPosition = new(_player2.CurrentPosition.X + _player2.Map.Size + SpaceBetweenMaps, _player2.CurrentPosition.Y);
 
 			DrawPlayerCursor(cursorPosition);
 
@@ -66,14 +62,7 @@ namespace Source.Rendering
 
 		public void DrawStats()
 		{
-			if (_gameMode == GameMode.PVE)
-			{
-				Console.WriteLine($"\nEnemy ships - {_firstPlayer.ShipsCount} \nMy ships - {_secondPlayer.ShipsCount}");
-
-				return;
-			}
-
-			Console.WriteLine($"\nLeft map ships - {_firstPlayer.ShipsCount} \nRight map ships - {_secondPlayer.ShipsCount}");
+			Console.WriteLine($"\nLeft map ships - {_player1.ShipsCount} \nRight map ships - {_player2.ShipsCount}");
 		}
 
 		private (ConsoleColor color, char icon) GetCellRender(Cell cell, bool isShipsVisible)
