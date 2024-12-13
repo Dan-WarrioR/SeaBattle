@@ -4,6 +4,8 @@ namespace Source.MapGeneration
 {
 	public class Map
 	{
+		public const int MapSize = 10;
+
 		private const int ShipFrequency = 10;
 
 		public int Size => _map.GetLength(0);

@@ -27,6 +27,10 @@ namespace Source.Core
 
 				DrawRoundScore();
 			}
+
+			SaveProfiles();
+
+			DrawEndGameScore();
 		}
 
 		private void SetupProfiles()
@@ -58,9 +62,28 @@ namespace Source.Core
 			}
 
 			_player2Score++;
+
+			_user1.ResetPlayer();
+			_user2.ResetPlayer();
 		}
 
+		private void SaveProfiles()
+		{
+			UpdateProfilesInfo();
+
+			_profileLoader.SaveProfiles();
+		}
+
+		private void UpdateProfilesInfo()
+		{
+			var winner = _player1Score > _player2Score ? _user1 : _user2;
+			var loser = winner == _user1 ? _user2 : _user1;
+
+			winner.WinCount++;
+			loser.LosesCount++;
+		}
 		
+
 
 		private bool IsEndGame()
 		{
@@ -76,6 +99,21 @@ namespace Source.Core
 			Console.WriteLine($"\tCurrent Score: {_player1Score} | {_player2Score}");
 
 			Thread.Sleep(5000);
+		}
+
+		private void DrawEndGameScore()
+		{
+			Console.Clear();
+
+			Console.WriteLine($"{_user1.Name}\n" +
+				$"\n{_user1.WinCount} - wins" +
+				$"\n{_user1.LosesCount} - loses" +
+				$"\n{_user1.WinRate * 100}% - win rate");
+
+			Console.WriteLine($"\n{_user2.Name}\n" +
+				$"\n{_user2.WinCount} - wins" +
+				$"\n{_user2.LosesCount} - loses" +
+				$"\n{_user2.WinRate * 100}% - win rate");
 		}
 	}
 }

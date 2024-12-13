@@ -6,8 +6,6 @@ namespace Source.Users
 {
 	public class Player
 	{
-		private const int MapSize = 10;
-
 		public Vector2 CurrentPosition { get; private set; }
 
 		public bool IsConfirmed { get; private set; } = true;
@@ -29,7 +27,7 @@ namespace Source.Users
 		{
 			IsAi = isAi;
 
-			Map = new(MapSize);
+			Map = new(Map.MapSize);
 
 			_validMoves = Map.GetAllAvailablesMoves();
 

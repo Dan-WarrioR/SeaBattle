@@ -4,9 +4,9 @@
 	{
 		public string Name { get; private set; }
 
-		public int WinCount {  get; private set; }
+		public int WinCount {  get; set; }
 
-		public int LosesCount { get; private set; }
+		public int LosesCount { get; set; }
 
 		public float WinRate => WinCount + LosesCount == 0 ? 0f : WinCount / (WinCount + LosesCount);
 
@@ -17,6 +17,11 @@
 			Name = name;
 
 			Player = player;
+		}
+
+		public void ResetPlayer()
+		{
+			Player = new(Player.IsAi);
 		}
 	}
 }
