@@ -5,13 +5,6 @@ using Source.Abilities;
 
 namespace Source.Core
 {
-    public enum GameMode
-    {
-        PVE,
-        EVE,
-        PVP,
-    }
-
 	public enum RoundResult
 	{
 		Player1Win,
