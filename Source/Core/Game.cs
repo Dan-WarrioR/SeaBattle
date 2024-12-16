@@ -5,11 +5,8 @@ namespace Source.Core
 {
 	public class Game
 	{
-		private User _user1;
-		private User _user2;
-
-		private int _player1Score = 0;
-		private int _player2Score = 0;
+		private Player _player1;
+		private Player _player2;
 
 		private ProfileService _profileService;
 
@@ -19,7 +16,7 @@ namespace Source.Core
 
 			while (!IsEndGame())
 			{
-				Round round = new(_user1.Player, _user2.Player);
+				Round round = new(_player1.GamePlayer, _player2.GamePlayer);
 
 				round.PlayRound();
 
@@ -42,29 +39,24 @@ namespace Source.Core
 			Console.Clear();
 			Console.WriteLine("Choose 1 profile!");
 
-			List<int> reservedNumbers = new();
+			List<int> reservedProfilesNumbers = new();
 
-			_user1 = profileSelector.SelectProfile(reservedNumbers);
+			var player1Stats = profileSelector.SelectProfile(reservedProfilesNumbers);
 
 			Console.Clear();
 			Console.WriteLine("Choose 2 profile!");
 
-			_user2 = profileSelector.SelectProfile(reservedNumbers);
+			var player2Stats = profileSelector.SelectProfile(reservedProfilesNumbers);
+
+			_player1 = new(player1Stats, new(player1Stats.IsAi));
+			_player2 = new(player2Stats, new(player2Stats.IsAi));
 		}
 
 		private void ProcessRoundResult(RoundResult result)
 		{
-			if (result == RoundResult.Player1Win)
-			{
-				_player1Score++;
+			var player = result == RoundResult.Player1Win ? _player1 : _player2;
 
-				return;
-			}
-
-			_player2Score++;
-
-			_user1.ResetPlayer();
-			_user2.ResetPlayer();
+			player.IncreaseScore();
 		}
 
 		private void SaveProfiles()
@@ -76,18 +68,17 @@ namespace Source.Core
 
 		private void UpdateProfilesInfo()
 		{
-			var winner = _player1Score > _player2Score ? _user1 : _user2;
-			var loser = winner == _user1 ? _user2 : _user1;
+			(var winner, var loser) = _player1.Score > _player2.Score ? (_player1, _player2) : (_player2, _player1);
 
-			winner.WinCount++;
-			loser.LosesCount++;
+			winner.Stats.WinCount++;
+			loser.Stats.LosesCount++;
 		}
 		
 
 
 		private bool IsEndGame()
 		{
-			return _player1Score >= 3 || _player2Score >= 3;
+			return _player1.Score >= 3 || _player2.Score >= 3;
 		}
 
 		
@@ -96,7 +87,7 @@ namespace Source.Core
 		{
 			Console.Clear();
 
-			Console.WriteLine($"\tCurrent Score: {_player1Score} | {_player2Score}");
+			Console.WriteLine($"\tCurrent Score: {_player1.Score} | {_player2.Score}");
 
 			Thread.Sleep(5000);
 		}
@@ -105,15 +96,8 @@ namespace Source.Core
 		{
 			Console.Clear();
 
-			Console.WriteLine($"{_user1.Name}\n" +
-				$"\n{_user1.WinCount} - wins" +
-				$"\n{_user1.LosesCount} - loses" +
-				$"\n{_user1.WinRate * 100}% - win rate");
-
-			Console.WriteLine($"\n{_user2.Name}\n" +
-				$"\n{_user2.WinCount} - wins" +
-				$"\n{_user2.LosesCount} - loses" +
-				$"\n{_user2.WinRate * 100}% - win rate");
+			Console.WriteLine(_player1.ToString());
+			Console.WriteLine(_player2.ToString());
 		}
 	}
 }

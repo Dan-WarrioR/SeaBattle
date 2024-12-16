@@ -7,7 +7,7 @@ namespace Source.ProfileSystem
 	{
 		private const string FilePath = "profiles.json";
 
-		public List<User> Profiles { get; private set; } = new();
+		public List<PlayerStats> Profiles { get; private set; } = new();
 
 		public ProfileService()
 		{
@@ -23,19 +23,19 @@ namespace Source.ProfileSystem
 
 			var json = File.ReadAllText(FilePath);
 
-			Profiles = JsonConvert.DeserializeObject<List<User>>(json);
+			Profiles = JsonConvert.DeserializeObject<List<PlayerStats>>(json);
 		}
 
 
 
-		public void AddProfile(User user)
+		public void AddProfile(PlayerStats user)
 		{
 			Profiles.Add(user);
 
 			SaveProfiles();
 		}
 
-		public User? GetProfile(int index)
+		public PlayerStats? GetProfile(int index)
 		{
 			if (index < 0 || index >= Profiles.Count)
 			{
@@ -45,7 +45,7 @@ namespace Source.ProfileSystem
 			return Profiles[index];
 		}
 
-		public User? GetProfile(string name)
+		public PlayerStats? GetProfile(string name)
 		{
 			return Profiles.Find(profile => profile.Name == name);
 		}	

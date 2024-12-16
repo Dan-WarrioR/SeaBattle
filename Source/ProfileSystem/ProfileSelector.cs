@@ -11,20 +11,21 @@ namespace Source.ProfileSystem
 			_profileLoader = loader;
 		}
 
-		public User SelectProfile(List<int> reservedNumbers)
+		public PlayerStats SelectProfile(List<int> reservedProfilesNumbers)
 		{
-			DrawProfiles(_profileLoader.Profiles, reservedNumbers);
+			DrawProfiles(_profileLoader.Profiles, reservedProfilesNumbers);
 
 			int lastCommandNumber = _profileLoader.Profiles.Count + 1;
 			
-			int commandNumber = CalculateUserInput(lastCommandNumber, reservedNumbers);
+			int commandNumber = CalculateUserInput(lastCommandNumber, reservedProfilesNumbers);
 
-			reservedNumbers.Add(commandNumber - 1);
+			reservedProfilesNumbers.Add(commandNumber - 1);
 
 			if (commandNumber == lastCommandNumber)
 			{
 				var data = EnterNewUserSettings();
-				var newUser = new User(data.name, new Player(data.isAi));
+				var newUser = new PlayerStats(data.name, data.isAi);
+
 				_profileLoader.AddProfile(newUser);
 
 				return newUser;
@@ -87,7 +88,7 @@ namespace Source.ProfileSystem
 			return (name, isAi);
 		}
 
-		private void DrawProfiles(List<User> profiles, List<int> reservedNumbers)
+		private void DrawProfiles(List<PlayerStats> profiles, List<int> reservedNumbers)
 		{
 			Console.WriteLine("\n==================================================\n");
 

@@ -17,16 +17,16 @@ namespace Source.Core
 
         private Renderer _renderer;
 
-        private Player _player1;
-        private Player _player2;
-        private Player _currentPlayer;
+        private GamePlayer _player1;
+        private GamePlayer _player2;
+        private GamePlayer _currentPlayer;
 
         private bool _onePlayerLostAllShips = false;
         private bool _isShipBombed = false;
 
         private List<BaseAbility> _activeAbilities = new();
 
-        public Round(Player player1, Player player2)
+        public Round(GamePlayer player1, GamePlayer player2)
         {
 			_player1 = player1;
 			_player2 = player2;

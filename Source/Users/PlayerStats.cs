@@ -1,6 +1,6 @@
 ﻿namespace Source.Users
 {
-	public class User
+	public class PlayerStats
 	{
 		public string Name { get; private set; }
 
@@ -10,18 +10,20 @@
 
 		public float WinRate => WinCount + LosesCount == 0 ? 0f : WinCount / (WinCount + LosesCount);
 
-		public Player Player { get; private set; }
+		public bool IsAi { get; }
 
-		public User(string name, Player player)
+		public PlayerStats(string name, bool isAi)
 		{
 			Name = name;
-
-			Player = player;
+			IsAi = isAi;
 		}
-
-		public void ResetPlayer()
+		
+		public override string ToString()
 		{
-			Player = new(Player.IsAi);
+			return $"{Name}\n" +
+				$"\n{WinCount} - wins" +
+				$"\n{LosesCount} - loses" +
+				$"\n{WinRate * 100}% - win rate";
 		}
 	}
 }

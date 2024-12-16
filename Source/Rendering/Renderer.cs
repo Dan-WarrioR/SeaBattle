@@ -12,10 +12,10 @@ namespace Source.Rendering
 		private bool FirstPlayerMapVisible => _player1.IsAi && (!_player2.IsAi || _player2.IsAi);
 		private bool SecondPlayerMapVisible => _player2.IsAi && (!_player1.IsAi || _player1.IsAi);
 
-		private Player _player1;
-		private Player _player2;
+		private GamePlayer _player1;
+		private GamePlayer _player2;
 
-		public Renderer(Player player1, Player player2)
+		public Renderer(GamePlayer player1, GamePlayer player2)
 		{
 			_player1 = player1;
 			_player2 = player2;
