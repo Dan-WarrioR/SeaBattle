@@ -4,22 +4,12 @@
     {
         public void Launch()
         {
-            InitializeConsoleSettings();
+			Console.OutputEncoding = System.Text.Encoding.UTF8;
+			Console.CursorVisible = false;
 
-            LaunchGame();
-        }
+			var game = new Game();
 
-        private void InitializeConsoleSettings()
-        {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Console.CursorVisible = false;
-        }
-
-        private void LaunchGame()
-        {
-            var game = new Game();
-
-            game.Launch();
-        }
+			game.Launch();
+		}
     }
 }
