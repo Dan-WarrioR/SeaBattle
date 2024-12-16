@@ -17,26 +17,14 @@ namespace Source.ProfileSystem
 
 			int lastCommandNumber = _profileLoader.Profiles.Count + 1;
 			
-			int commandNumber = CalculateUserInput(lastCommandNumber, reservedProfilesNumbers);
+			int commandNumber = GetValidNumberInput(lastCommandNumber, reservedProfilesNumbers);
 
 			reservedProfilesNumbers.Add(commandNumber - 1);
 
-			if (commandNumber == lastCommandNumber)
-			{
-				var data = EnterNewUserSettings();
-				var newUser = new PlayerStats(data.name, data.isAi);
-
-				_profileLoader.AddProfile(newUser);
-
-				return newUser;
-			}
-			else
-			{
-				return _profileLoader.Profiles[commandNumber - 1];
-			}
+			return commandNumber == lastCommandNumber ? CreateNewProfile() : _profileLoader.Profiles[commandNumber - 1];
 		}
 
-		private int CalculateUserInput(int maxNumber, List<int> reservedNumbers)
+		private int GetValidNumberInput(int maxNumber, List<int> reservedNumbers)
 		{
 			do
 			{
@@ -56,36 +44,43 @@ namespace Source.ProfileSystem
 			} while (true);
 		}
 
-		private (string name, bool isAi) EnterNewUserSettings()
+		private string GetProfileName()
 		{
-			Console.WriteLine("==================================================");
-			Console.WriteLine("Write new user name:");
+			Console.WriteLine("Enter new user name:");
 
-			string name;
-
+			string input;
 			do
 			{
-				name = Console.ReadLine();
-			} while (string.IsNullOrWhiteSpace(name));
+				input = Console.ReadLine();
+			} while (string.IsNullOrWhiteSpace(input));
 
+			return input;
+		}
+
+		private bool ChooseInputHandling()
+		{
 			Console.WriteLine($"Choose input handling: " +
 							  $"\n1 - Native input " +
 							  $"\n2 - Random input");
 
-			bool isAi = false;
 			ConsoleKey key;
-
 			do
 			{
 				key = Console.ReadKey(true).Key;
 			} while (key != ConsoleKey.D1 && key != ConsoleKey.D2);
 
-			if (key == ConsoleKey.D2)
-			{
-				isAi = true;
-			}
+			return key == ConsoleKey.D2;
+		}
 
-			return (name, isAi);
+		private PlayerStats CreateNewProfile()
+		{
+			string name = GetProfileName();
+			bool isAi = ChooseInputHandling();
+
+			var newUser = new PlayerStats(name, isAi);
+			_profileLoader.AddProfile(newUser);
+
+			return newUser;
 		}
 
 		private void DrawProfiles(List<PlayerStats> profiles, List<int> reservedNumbers)

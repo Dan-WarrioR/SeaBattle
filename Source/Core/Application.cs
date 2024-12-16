@@ -24,13 +24,11 @@ namespace Source.Core
 		private (Player player1, Player player2) LoadPlayers()
 		{
 			_profileService = new();
-
 			var profileSelector = new ProfileSelector(_profileService);
+			List<int> reservedProfilesNumbers = new();
 
 			Console.Clear();
 			Console.WriteLine("Choose 1 profile!");
-
-			List<int> reservedProfilesNumbers = new();
 
 			var player1Stats = profileSelector.SelectProfile(reservedProfilesNumbers);
 
