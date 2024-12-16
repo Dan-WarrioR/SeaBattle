@@ -1,5 +1,4 @@
-﻿using Source.ProfileSystem;
-using Source.Users;
+﻿using Source.Users;
 
 namespace Source.Core
 {
@@ -8,12 +7,14 @@ namespace Source.Core
 		private Player _player1;
 		private Player _player2;
 
-		private ProfileService _profileService;
+		public Game(Player player1, Player player2)
+		{
+			_player1 = player1;
+			_player2 = player2;
+		}
 
 		public void Launch()
 		{
-			SetupProfiles();
-
 			while (!IsEndGame())
 			{
 				Round round = new(_player1.GamePlayer, _player2.GamePlayer);
@@ -23,33 +24,11 @@ namespace Source.Core
 				ProcessRoundResult(round.RoundResult);
 
 				DrawRoundScore();
+
+				ResetsPlayers();
 			}
 
-			SaveProfiles();
-
 			DrawEndGameScore();
-		}
-
-		private void SetupProfiles()
-		{
-			_profileService = new();
-
-			var profileSelector = new ProfileSelector(_profileService);
-
-			Console.Clear();
-			Console.WriteLine("Choose 1 profile!");
-
-			List<int> reservedProfilesNumbers = new();
-
-			var player1Stats = profileSelector.SelectProfile(reservedProfilesNumbers);
-
-			Console.Clear();
-			Console.WriteLine("Choose 2 profile!");
-
-			var player2Stats = profileSelector.SelectProfile(reservedProfilesNumbers);
-
-			_player1 = new(player1Stats, new(player1Stats.IsAi));
-			_player2 = new(player2Stats, new(player2Stats.IsAi));
 		}
 
 		private void ProcessRoundResult(RoundResult result)
@@ -59,19 +38,10 @@ namespace Source.Core
 			player.IncreaseScore();
 		}
 
-		private void SaveProfiles()
+		private void ResetsPlayers()
 		{
-			UpdateProfilesInfo();
-
-			_profileService.SaveProfiles();
-		}
-
-		private void UpdateProfilesInfo()
-		{
-			(var winner, var loser) = _player1.Score > _player2.Score ? (_player1, _player2) : (_player2, _player1);
-
-			winner.Stats.WinCount++;
-			loser.Stats.LosesCount++;
+			_player1.Reset();
+			_player2.Reset();
 		}
 		
 
@@ -97,6 +67,7 @@ namespace Source.Core
 			Console.Clear();
 
 			Console.WriteLine(_player1.ToString());
+			Console.WriteLine();
 			Console.WriteLine(_player2.ToString());
 		}
 	}

@@ -8,7 +8,7 @@
 
 		public int LosesCount { get; set; }
 
-		public float WinRate => WinCount + LosesCount == 0 ? 0f : WinCount / (WinCount + LosesCount);
+		public float WinRate => WinCount + LosesCount == 0 ? 0f : MathF.Round(WinCount * 1f / (WinCount + LosesCount), 2);
 
 		public bool IsAi { get; }
 
