@@ -3,13 +3,13 @@ using Source.Users;
 
 namespace Source.ProfileSystem
 {
-	public class ProfileLoader
+	public class ProfileService
 	{
 		private const string FilePath = "profiles.json";
 
 		public List<User> Profiles { get; private set; } = new();
 
-		public ProfileLoader()
+		public ProfileService()
 		{
 			LoadAllProfiles();
 		}

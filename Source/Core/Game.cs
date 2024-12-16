@@ -11,7 +11,7 @@ namespace Source.Core
 		private int _player1Score = 0;
 		private int _player2Score = 0;
 
-		private ProfileLoader _profileLoader;
+		private ProfileService _profileService;
 
 		public void Launch()
 		{
@@ -35,9 +35,9 @@ namespace Source.Core
 
 		private void SetupProfiles()
 		{
-			_profileLoader = new();
+			_profileService = new();
 
-			var profileSelector = new ProfileSelector(_profileLoader);
+			var profileSelector = new ProfileSelector(_profileService);
 
 			Console.Clear();
 			Console.WriteLine("Choose 1 profile!");
@@ -71,7 +71,7 @@ namespace Source.Core
 		{
 			UpdateProfilesInfo();
 
-			_profileLoader.SaveProfiles();
+			_profileService.SaveProfiles();
 		}
 
 		private void UpdateProfilesInfo()

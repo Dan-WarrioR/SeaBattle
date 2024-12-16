@@ -4,9 +4,9 @@ namespace Source.ProfileSystem
 {
 	public class ProfileSelector
 	{
-		private readonly ProfileLoader _profileLoader;
+		private readonly ProfileService _profileLoader;
 
-		public ProfileSelector(ProfileLoader loader)
+		public ProfileSelector(ProfileService loader)
 		{
 			_profileLoader = loader;
 		}
