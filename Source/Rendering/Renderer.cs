@@ -9,8 +9,8 @@ namespace Source.Rendering
 	{
 		private const int SpaceBetweenMaps = 5;
 
-		private bool FirstPlayerMapVisible => true; //_player1.IsAi && (!_player2.IsAi || _player2.IsAi)
-		private bool SecondPlayerMapVisible => true; //_player2.IsAi && (!_player1.IsAi || _player1.IsAi)
+		private bool FirstPlayerMapVisible => _player1.IsAi && (!_player2.IsAi || _player2.IsAi); //_player1.IsAi && (!_player2.IsAi || _player2.IsAi)
+		private bool SecondPlayerMapVisible => _player2.IsAi && (!_player1.IsAi || _player1.IsAi); //_player2.IsAi && (!_player1.IsAi || _player1.IsAi)
 
 		private GamePlayer _player1;
 		private GamePlayer _player2;
