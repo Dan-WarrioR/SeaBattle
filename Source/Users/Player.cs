@@ -21,7 +21,7 @@
 
 		public void Reset()
 		{
-			GamePlayer = new(GamePlayer.IsAi);
+			GamePlayer = new(GamePlayer.IsAi, GamePlayer.AiDifficulty);
 		}
 
 		public override string ToString()

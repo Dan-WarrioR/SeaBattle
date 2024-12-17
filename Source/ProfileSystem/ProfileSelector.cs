@@ -61,7 +61,7 @@ namespace Source.ProfileSystem
 		{
 			Console.WriteLine($"Choose input handling: " +
 							  $"\n1 - Native input " +
-							  $"\n2 - Random input");
+							  $"\n2 - AI input");
 
 			ConsoleKey key;
 			do
@@ -72,12 +72,38 @@ namespace Source.ProfileSystem
 			return key == ConsoleKey.D2;
 		}
 
+		private Difficulty ChooseAiDifficulty()
+		{
+			Console.WriteLine($"Choose difficulty for ai: ");
+
+			var difficulties = Enum.GetNames(typeof(Difficulty));
+
+			for (int i = 0; i < difficulties.Length; i++)
+			{
+				Console.WriteLine($"{i + 1} - {difficulties[i]}");
+			}			
+
+			ConsoleKey key;
+			do
+			{
+				key = Console.ReadKey(true).Key;
+			} while (key < ConsoleKey.D1 || key > ConsoleKey.D9);
+
+			return (Difficulty)(key - ConsoleKey.D1);
+		}
+
 		private PlayerStats CreateNewProfile()
 		{
 			string name = GetProfileName();
 			bool isAi = ChooseInputHandling();
+			var difficulty = Difficulty.Easy;
 
-			var newUser = new PlayerStats(name, isAi);
+			if (isAi)
+			{
+				difficulty = ChooseAiDifficulty();
+			}
+
+			var newUser = new PlayerStats(name, isAi, difficulty);
 			_profileLoader.AddProfile(newUser);
 
 			return newUser;

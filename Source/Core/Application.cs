@@ -37,8 +37,8 @@ namespace Source.Core
 
 			var player2Stats = profileSelector.SelectProfile(reservedProfilesNumbers);
 
-			var player1 = new Player(player1Stats, new(player1Stats.IsAi));
-			var player2 = new Player(player2Stats, new(player2Stats.IsAi));
+			var player1 = new Player(player1Stats, new(player1Stats.IsAi, player1Stats.Difficulty));
+			var player2 = new Player(player2Stats, new(player2Stats.IsAi, player2Stats.Difficulty));
 
 			return (player1, player2);
 		}

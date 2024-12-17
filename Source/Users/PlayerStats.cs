@@ -1,5 +1,13 @@
 ﻿namespace Source.Users
 {
+	public enum Difficulty
+	{
+		Easy,
+		Medium,
+		Hard,
+		Impossible,
+	}
+
 	public class PlayerStats
 	{
 		public string Name { get; private set; }
@@ -12,10 +20,13 @@
 
 		public bool IsAi { get; }
 
-		public PlayerStats(string name, bool isAi)
+		public Difficulty Difficulty { get; private set; }
+
+		public PlayerStats(string name, bool isAi, Difficulty difficulty = Difficulty.Easy)
 		{
 			Name = name;
 			IsAi = isAi;
+			Difficulty = difficulty;
 		}
 		
 		public override string ToString()
